@@ -6,11 +6,11 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
+	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
 )
@@ -26,12 +26,23 @@ type Keys struct {
 	x            string
 	y            string
 	WalletBalance
+	withLocalNode bool
 }
 
 type WalletBalance struct {
 	Balance      float64 `json:"balance"`
 	FinalBalance float64 `json:"final_balance"`
 }
+
+type NodeData struct {
+	url     string
+	port    string
+	userRcp string
+	passRcp string
+	useSSL  bool
+}
+
+var accessNodeData NodeData
 
 func (keys *Keys) GeneratePrivKey() {
 	reader := rand.Reader
@@ -93,6 +104,45 @@ func (keys *Keys) GenerateAddress() {
 }
 
 func (keys *Keys) GetBalance() {
+
+	if keys.withLocalNode {
+		rpcUser := accessNodeData.userRcp
+		rpcPass := accessNodeData.passRcp
+		rpcHost := accessNodeData.url + accessNodeData.port // Dirección del nodo de Bitcoin
+		useSSL := accessNodeData.useSSL
+
+		// Dirección de la wallet que quieres consultar
+		address := keys.address
+
+		// Crea una configuración de conexión
+		connCfg := &rpcclient.ConnConfig{
+			Host:         rpcHost,
+			User:         rpcUser,
+			Pass:         rpcPass,
+			DisableTLS:   useSSL,
+			HTTPPostMode: true,
+		}
+
+		// Crea un cliente de RPC para conectar al nodo de Bitcoin
+		client, err := rpcclient.New(connCfg, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer client.Shutdown()
+
+		// Obtiene el saldo de la dirección de la wallet
+		balance, err := client.GetBalance(address)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// Estructura para almacenar la respuesta JSON
+		var walletBalance WalletBalance
+		walletBalance.Balance = float64(balance)
+		walletBalance.FinalBalance = balance.ToBTC()
+		keys.WalletBalance = walletBalance
+		return
+	}
+
 	result, err := http.Get("https://api.blockcypher.com/v1/btc/main/addrs/" + keys.address + "/balance")
 	if err != nil {
 		log.Print("Error consultado saldo.")
@@ -102,7 +152,7 @@ func (keys *Keys) GetBalance() {
 	// Leer el cuerpo de la respuesta
 	body, err := ioutil.ReadAll(result.Body)
 	if err != nil {
-		fmt.Println("Error al leer la respuesta:", err)
+		log.Println("Error al leer la respuesta:", err)
 		return
 	}
 	// Estructura para almacenar la respuesta JSON
@@ -111,9 +161,14 @@ func (keys *Keys) GetBalance() {
 	// Decodificar la respuesta JSON en la estructura
 	err = json.Unmarshal(body, &walletBalance)
 	if err != nil {
-		fmt.Println("Error al decodificar la respuesta JSON:", err)
+		log.Println("Error al decodificar la respuesta JSON:", err)
 		return
 	}
 
 	keys.WalletBalance = walletBalance
+}
+
+func (keys *Keys) isLocalNode(nodeData NodeData) {
+	keys.withLocalNode = true
+	accessNodeData = nodeData
 }
