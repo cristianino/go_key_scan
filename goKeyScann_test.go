@@ -11,18 +11,31 @@ func TestGenerateAddress(t *testing.T) {
 	keys.GeneratePublicKey()
 	keys.GenerateAddress()
 
+	/* keys.isLocalNode(NodeData{
+		url:     "127.0.0.1",
+		port:    ":8332",
+		userRcp: "tu_usuario_rpc",
+		passRcp: "tu_contraseña_rpc",
+		useSSL:  false,
+	}) */
+
+	keys.GetBalance()
+
 	// Print the private key, public key, and Bitcoin address to the console.
 	fmt.Println("Private key:", keys.private)
 	fmt.Println("Public key:", keys.public)
 	fmt.Println("Bitcoin address:", keys.address)
+	fmt.Printf("El saldo de la wallet BTC es: %f BTC\n", keys.Balance)
 
 	var keys2 Keys
 	keys2.GeneratePrivKey()
 	keys2.GeneratePublicKey()
 	keys2.GenerateAddress()
+	keys2.GetBalance()
 
 	// Print the private key, public key, and Bitcoin address to the console.
 	fmt.Println("Private key:", keys2.private)
 	fmt.Println("Public key:", keys2.public)
 	fmt.Println("Bitcoin address:", keys2.address)
+	fmt.Printf("El saldo de la wallet BTC es: %f BTC\n", keys2.Balance)
 }
