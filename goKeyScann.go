@@ -18,7 +18,9 @@ type Keys struct {
 	private      ecdsa.PrivateKey
 	privateValue string
 	hash256      [32]byte
-	value        float64
+	balance      float64
+	x            string
+	y            string
 }
 
 func (keys *Keys) GeneratePrivKey() {
@@ -29,7 +31,9 @@ func (keys *Keys) GeneratePrivKey() {
 		panic(err)
 	}
 	keys.private = *private_key
-	keys.privateValue = private_key.Params().Name
+	keys.x = private_key.X.String()
+	keys.y = private_key.Y.String()
+	keys.privateValue = private_key.D.String()
 }
 
 func (keys *Keys) GeneratePublicKey() {
@@ -40,6 +44,7 @@ func (keys *Keys) GeneratePublicKey() {
 	// Encode the public key in uncompressed format.
 	public_key_bytes := elliptic.Marshal(elliptic.P256(), public_key.X, public_key.Y)
 	keys.publicBytes = public_key_bytes
+	keys.publicValue = string(public_key_bytes)
 
 	// Apply SHA-256 hash to the public key.
 	sha256Hash := sha256.Sum256(public_key_bytes)
@@ -75,4 +80,8 @@ func (keys *Keys) GenerateAddress() {
 	address := base58.Encode(finalBytes)
 
 	keys.address = address
+}
+
+func (keys *Keys) GetBalance() {
+	keys.balance = 1.1
 }
