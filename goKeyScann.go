@@ -5,6 +5,11 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
@@ -18,9 +23,14 @@ type Keys struct {
 	private      ecdsa.PrivateKey
 	privateValue string
 	hash256      [32]byte
-	balance      float64
 	x            string
 	y            string
+	WalletBalance
+}
+
+type WalletBalance struct {
+	Balance      float64 `json:"balance"`
+	FinalBalance float64 `json:"final_balance"`
 }
 
 func (keys *Keys) GeneratePrivKey() {
@@ -83,5 +93,27 @@ func (keys *Keys) GenerateAddress() {
 }
 
 func (keys *Keys) GetBalance() {
-	keys.balance = 1.1
+	result, err := http.Get("https://api.blockcypher.com/v1/btc/main/addrs/" + keys.address + "/balance")
+	if err != nil {
+		log.Print("Error consultado saldo.")
+		return
+	}
+	defer result.Body.Close()
+	// Leer el cuerpo de la respuesta
+	body, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		fmt.Println("Error al leer la respuesta:", err)
+		return
+	}
+	// Estructura para almacenar la respuesta JSON
+	var walletBalance WalletBalance
+
+	// Decodificar la respuesta JSON en la estructura
+	err = json.Unmarshal(body, &walletBalance)
+	if err != nil {
+		fmt.Println("Error al decodificar la respuesta JSON:", err)
+		return
+	}
+
+	keys.WalletBalance = walletBalance
 }
