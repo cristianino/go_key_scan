@@ -1,4 +1,4 @@
-module github.com/cristianino/go_key_scan
+module github.com/cristianino/gokeypubscan
 
 go 1.20
 
