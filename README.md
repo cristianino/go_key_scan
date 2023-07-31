@@ -5,7 +5,7 @@ Este es un generador de direcciones de Bitcoin en Golang, su implementación es 
 ## Instalación
 
 ```bash
-go get -u github.com/cristianino/go_key_scan
+go get -u github.com/cristianino/gokeypubscan
 ```
 
 ## Uso consultando API
@@ -16,7 +16,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/cristianino/go_key_scan"
+	"github.com/cristianino/gokeypubscan"
 )
 
 func main() {
@@ -27,9 +27,9 @@ func main() {
 	keys.GetBalance()
 
 	// Print the private key, public key, and Bitcoin address to the console.
-	fmt.Println("Private key:", keys.private)
-	fmt.Println("Public key:", keys.public)
-	fmt.Println("Bitcoin address:", keys.address)
+	fmt.Println("Private key:", keys.GetKeyPrivate)
+	fmt.Println("Public key:", keys.GetKeyPublic)
+	fmt.Println("Bitcoin address:", keys.GetAddress)
 	fmt.Printf("El saldo de la wallet BTC es: %f BTC\n", keys.Balance)
 }
 ```
@@ -60,9 +60,9 @@ func main() {
 	keys.GetBalance()
 
 	// Print the private key, public key, and Bitcoin address to the console.
-	fmt.Println("Private key:", keys.private)
-	fmt.Println("Public key:", keys.public)
-	fmt.Println("Bitcoin address:", keys.address)
+	fmt.Println("Private key:", keys.GetKeyPrivate)
+	fmt.Println("Public key:", keys.GetKeyPublic)
+	fmt.Println("Bitcoin address:", keys.GetAddress)
 	fmt.Printf("El saldo de la wallet BTC es: %f BTC\n", keys.Balance)
 }
 ```
