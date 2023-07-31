@@ -44,6 +44,26 @@ type NodeData struct {
 
 var accessNodeData NodeData
 
+func (keys *Keys) GetKeyPublic() ecdsa.PublicKey {
+	return keys.public
+}
+
+func (keys *Keys) GetKeyPrivate() ecdsa.PrivateKey {
+	return keys.private
+}
+
+func (keys *Keys) SetKeyPrivate(private_key ecdsa.PrivateKey) {
+	keys.private = private_key
+}
+
+func (keys *Keys) GetAddress() string {
+	return keys.address
+}
+
+func (keys *Keys) GetHash() [32]byte {
+	return keys.hash256
+}
+
 func (keys *Keys) GeneratePrivKey() {
 	reader := rand.Reader
 	// Generate a random 256-bit private key.
