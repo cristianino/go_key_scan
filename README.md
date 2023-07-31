@@ -20,16 +20,16 @@ import (
 )
 
 func main() {
-	var keys Keys
+	var keys gokeypubscan.Keys
 	keys.GeneratePrivKey()
 	keys.GeneratePublicKey()
 	keys.GenerateAddress()
 	keys.GetBalance()
 
 	// Print the private key, public key, and Bitcoin address to the console.
-	fmt.Println("Private key:", keys.GetKeyPrivate)
-	fmt.Println("Public key:", keys.GetKeyPublic)
-	fmt.Println("Bitcoin address:", keys.GetAddress)
+	fmt.Println("Private key:", keys.GetKeyPrivate())
+	fmt.Println("Public key:", keys.GetKeyPublic())
+	fmt.Println("Bitcoin address:", keys.GetAddress())
 	fmt.Printf("El saldo de la wallet BTC es: %f BTC\n", keys.Balance)
 }
 ```
@@ -42,11 +42,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/cristianino/go_key_scan"
+	"github.com/cristianino/gokeypubscan"
 )
 
 func main() {
-	var keys Keys
+	var keys gokeypubscan.Keys
 	keys.GeneratePrivKey()
 	keys.GeneratePublicKey()
 	keys.GenerateAddress()
@@ -60,9 +60,9 @@ func main() {
 	keys.GetBalance()
 
 	// Print the private key, public key, and Bitcoin address to the console.
-	fmt.Println("Private key:", keys.GetKeyPrivate)
-	fmt.Println("Public key:", keys.GetKeyPublic)
-	fmt.Println("Bitcoin address:", keys.GetAddress)
+	fmt.Println("Private key:", keys.GetKeyPrivate())
+	fmt.Println("Public key:", keys.GetKeyPublic())
+	fmt.Println("Bitcoin address:", keys.GetAddress())
 	fmt.Printf("El saldo de la wallet BTC es: %f BTC\n", keys.Balance)
 }
 ```
